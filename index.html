@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Day of Account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE: a church game-show night — reverent, warm, a little theatrical
+   IDEA: the master's ledger on the day of account (Matthew 25:19); talents counted in gold
+   PICTURE: the live scoreboard of four teams and the four-category board are the picture
+   COLOUR and TYPE: Deep navy ground, gold talents, ivory text; Cinzel titles, Inter body
+   LAYOUT: title strip, scoreboard row, turn bar, four category columns; question opens full-screen */
+:root{color-scheme:light dark;--bg:light-dark(#f6f1e4,#0b1632);--panel:light-dark(#fffaf0,#132350);--ink:light-dark(#14203f,#f4ecd8);--mute:light-dark(#5a6482,#aeb6cf);--gold:#c9a227;--gold2:light-dark(#8a6a0c,#e6c45a);--line:light-dark(#d9ceb0,#2a3d73);--good:#2f8f5b;--bad:#c2463a;--navy:#0b1632}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;overflow-x:clip}
+h1,h2,h3,.cin{font-family:Cinzel,Georgia,serif;letter-spacing:.01em}
+button{font:inherit;cursor:pointer;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);min-height:44px;padding:8px 14px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.gold{background:var(--gold);color:#1b1404;border-color:var(--gold);font-weight:700}
+header{background:var(--navy);color:#f4ecd8;padding:18px max(4vw,16px);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;border-bottom:3px solid var(--gold)}
+header h1{margin:0;font-size:clamp(26px,4vw,42px);line-height:1.05;color:#f1d778}
+header p{margin:2px 0 0;color:#c8cfe3;font-size:15px}
+header .tools{display:flex;gap:8px;flex-wrap:wrap}
+header button{background:transparent;color:#f4ecd8;border-color:#3a4f8a}
+main{padding:18px max(4vw,16px) 40px;max-width:1400px;margin:0 auto}
+.teams{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.team{background:var(--panel);border:2px solid var(--line);border-radius:16px;padding:12px 14px;position:relative;cursor:pointer;transition:transform .2s}
+.team.on{border-color:var(--gold);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 30%,transparent);transform:translateY(-2px)}
+.team input{width:100%;font:600 17px Inter,sans-serif;border:0;background:transparent;color:var(--ink);padding:2px 0;border-bottom:1px dashed var(--line)}
+.score{font:700 clamp(36px,5vw,58px)/1 Cinzel,serif;color:var(--gold2);margin:8px 0 2px;font-variant-numeric:tabular-nums}
+.score small{font:500 14px Inter;color:var(--mute);margin-left:4px}
+.done{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.done span{font-size:12px;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--mute)}
+.done span.x{background:var(--gold);border-color:var(--gold);color:#1b1404}
+.adj{position:absolute;top:8px;right:8px;display:flex;gap:4px}
+.adj button{min-height:30px;padding:2px 8px;font-size:13px}
+.turnbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:16px 0;padding:12px 16px;border-radius:14px;background:var(--panel);border:1px solid var(--line)}
+.turnbar b{color:var(--gold2)}
+.clock{font:700 26px Cinzel,serif;font-variant-numeric:tabular-nums}
+.board{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.col{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.col h2{margin:0 0 2px;font-size:20px;line-height:1.15}
+.col p{margin:0 0 12px;color:var(--mute);font-size:13px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.tile{font:700 22px Cinzel,serif;min-height:58px;background:linear-gradient(160deg,#16295e,#0b1632);color:#f1d778;border:1px solid #2c4282}
+.tile:hover{border-color:var(--gold)}
+.tile.used{background:transparent;color:var(--mute);border-style:dashed;text-decoration:line-through;cursor:default}
+.ov{position:fixed;inset:0;background:color-mix(in srgb,#050b1c 88%,transparent);display:none;place-items:center;padding:16px;z-index:9}
+.ov.show{display:grid}
+.card{background:var(--navy);color:#f4ecd8;border:2px solid var(--gold);border-radius:22px;width:min(980px,100%);max-height:94vh;overflow:auto;padding:clamp(18px,3vw,40px)}
+.card .cat{color:#f1d778;font:700 15px Inter;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.q{font:600 clamp(22px,3.2vw,36px)/1.3 Cinzel,serif;margin:18px 0;text-wrap:balance}
+.q em{color:#f1d778;font-style:normal}
+.clues{list-style:none;padding:0;margin:0 0 14px;display:grid;gap:8px}
+.clues li{padding:10px 14px;border-left:4px solid var(--gold);background:#132350;border-radius:8px;font-size:clamp(17px,2vw,22px);animation:in .35s ease}
+.ans{display:none;background:#f4ecd8;color:#14203f;border-radius:14px;padding:16px 18px;margin:14px 0;font-size:clamp(17px,2vw,21px)}
+.ans.show{display:block;animation:in .35s ease}
+.ans b{font-family:Cinzel,serif}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+.card button{background:#132350;color:#f4ecd8;border-color:#3a4f8a}
+.card .gold{background:var(--gold);color:#1b1404}
+.card .ok{background:var(--good);border-color:var(--good);color:#fff;font-weight:700}
+.card .no{background:var(--bad);border-color:var(--bad);color:#fff;font-weight:700}
+.timer{font:700 40px Cinzel,serif;font-variant-numeric:tabular-nums;color:#f1d778;margin-left:auto}
+.timer.low{color:#ff7b6b}
+.who{color:#c8cfe3;font-size:15px}
+.sheet{color:#f4ecd8}.sheet h3{color:#f1d778;margin:22px 0 6px}.sheet ol{padding-left:22px}.sheet li{margin:6px 0}.sheet .a{color:#c8cfe3}
+.final li{font-size:22px;margin:8px 0}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:900px){.teams,.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.teams,.board{grid-template-columns:minmax(0,1fr)}.timer{margin-left:0}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>The Day of Account</h1>
+    <p>First Quarterly Review · Lessons 1–12 · “After a long time the lord of those servants cometh, and reckoneth with them” (Matthew 25:19)</p>
+  </div>
+  <div class="tools">
+    <button id="bRules">Rules</button>
+    <button id="bSheet">Host answer sheet</button>
+    <button id="bFinal">Final account</button>
+    <button id="bReset">New game</button>
+  </div>
+</header>
+<main>
+  <section class="teams" id="teams" aria-label="Scoreboard"></section>
+  <div class="turnbar">
+    <div id="turnTxt"></div>
+    <div class="row" style="margin:0">
+      <span class="clock" id="clock">30:00</span>
+      <button id="bClock" class="gold">Start 30-min clock</button>
+    </div>
+  </div>
+  <section class="board" id="board" aria-label="Game board"></section>
+</main>
+
+<div class="ov" id="ov" role="dialog" aria-modal="true"><div class="card" id="card"></div></div>
+
+<script>
+{
+const L=["","The Immanence of God","The Blood of Jesus","Water Baptism","Sanctification","The Ministry of Angels","The Priesthood of Believers","Spiritual Discipline","Effective Prayer","The Joy of Service","Stewardship","The Hireling","The Poor in Spirit"];
+const CATS=[
+{id:"verse",name:"Finish the Verse",short:"Verse",secs:30,blurb:"Complete this quarter’s memory verses (KJV).",items:[
+[1,"Colossians 1:17","And he is before all things,","and by him all things consist."],
+[2,"Ephesians 1:7","In whom we have redemption through his blood,","the forgiveness of sins, according to the riches of his grace."],
+[3,"Acts 2:41","Then they that gladly received his word were baptized:","and the same day there were added unto them about three thousand souls."],
+[4,"1 Thessalonians 5:23","And the very God of peace sanctify you wholly;","and I pray God your whole spirit and soul and body be preserved blameless unto the coming of our Lord Jesus Christ."],
+[5,"Psalm 91:11","For he shall give his angels charge over thee,","to keep thee in all thy ways."],
+[6,"1 Peter 2:9","But ye are a chosen generation, a royal priesthood,","an holy nation, a peculiar people; that ye should shew forth the praises of him who hath called you out of darkness into his marvellous light."],
+[7,"1 Timothy 4:8","For bodily exercise profiteth little:","but godliness is profitable unto all things, having promise of the life that now is, and of that which is to come."],
+[8,"Proverbs 15:29","The LORD is far from the wicked:","but he heareth the prayer of the righteous."],
+[9,"2 Kings 3:11","…And one of the king of Israel’s servants answered and said, Here is Elisha the son of Shaphat,","which poured water on the hands of Elijah."],
+[10,"1 Corinthians 4:2","Moreover it is required in stewards,","that a man be found faithful."],
+[11,"John 10:12","But he that is an hireling, and not the shepherd, whose own the sheep are not,","seeth the wolf coming, and leaveth the sheep, and fleeth: and the wolf catcheth them, and scattereth the sheep."],
+[12,"Psalm 51:17","The sacrifices of God are a broken spirit:","a broken and a contrite heart, O God, thou wilt not despise."]]},
+{id:"who",name:"Who Am I?",short:"Who",secs:60,blurb:"Clues one at a time. One guess per team.",items:[
+[9,["My father was Shaphat, and I was ploughing when I was called.","I served my master humbly, even pouring water on his hands.","I asked for a double portion of his spirit.","Three kings came looking for me when they needed a word from God."],"Elisha (2 Kings 2:9–10; 3:11)"],
+[8,["I was a man subject to like passions as you are.","I prayed earnestly that it might not rain.","No rain fell for three years and six months.","I prayed again, and heaven gave rain."],"Elijah (James 5:17–18)"],
+[1,["God came near me while I kept my father-in-law’s flock.","He told me He had seen the affliction of His people.","I was told to take off my shoes, for the ground was holy.","God called my name out of a bush that burned but was not consumed."],"Moses (Exodus 3:4–7)"],
+[12,["I was rich, and I worked as a chief tax collector.","I wanted to see Jesus, but the crowd was in my way.","Being short, I climbed a sycomore tree.","Jesus said, “This day is salvation come to this house.”"],"Zacchaeus (Luke 19:1–9)"],
+[12,["I went up to the temple to pray, standing beside a proud man.","I stood afar off and would not even lift my eyes to heaven.","I smote upon my breast and cried, “God be merciful to me a sinner.”","I went down to my house justified, rather than the other man."],"The Publican (Luke 18:9–14)"],
+[12,["I was a great woman who lived in Shunem.","I persuaded a man of God to eat bread at my house.","I asked my husband to build him a little chamber on the wall.","Through my hospitality and humility, I was promised a son."],"The Shunammite woman (2 Kings 4:8–16)"],
+[8,["I was a soldier with men under my authority.","My servant lay at home sick of the palsy.","I said I was not worthy for Jesus to come under my roof.","I said, “Speak the word only, and my servant shall be healed.”"],"The Centurion (Matthew 8:5–13)"],
+[4,["I saw the Lord sitting upon a throne, high and lifted up.","Above Him stood beings with six wings, crying “Holy, holy, holy.”","I cried, “Woe is me! for I am undone… a man of unclean lips.”","A live coal from the altar touched my lips, and my sin was purged."],"Isaiah (Isaiah 6:1–7)"]]},
+{id:"court",name:"The Bible Courtroom",short:"Court",secs:120,blurb:"Agree or disagree? Defend it with Scripture. 1 min to prepare, 1 min to plead.",items:[
+[3,"“Water baptism is what saves a person.”","DISAGREE. Baptism does not save; it is the outward response to an inward, saving faith (Lesson 3). The thief on the cross was saved without it (Luke 23:39–43). Salvation is by grace through faith (Ephesians 2:8–9)."],
+[6,"“Prayer is the pastor’s job. Ordinary members just say ‘Amen’.”","DISAGREE. Every believer is a priest with direct access to God (1 Peter 2:9; Hebrews 4:16) and is called to stand in the gap through intercession (1 Timothy 2:1). Direct access brings greater responsibility (Lesson 6)."],
+[11,"“If I serve in church only when it is convenient, God still counts it as faithful service.”","DISAGREE. Serving only when convenient or profitable is the mark of a hireling (John 10:12–13; Malachi 1:10). God requires stewards to be found faithful (1 Corinthians 4:2)."],
+[1,"“God is too great and too far away to be concerned with my small daily problems.”","DISAGREE. God is immanent: near and involved. He knows our thoughts and ways (Psalm 139:1–3), sees suffering and acts (Exodus 3:7–8), and is with us always (Matthew 28:20)."],
+[2,"“Since I am covered by the blood of Jesus, how I live no longer matters.”","DISAGREE. To benefit from the blood we must be saved and obedient (Romans 6:16–18; Isaiah 59:1–2). God calls us to be sanctified wholly (1 Thessalonians 5:23)."],
+[7,"“Spiritual discipline is legalism. Under grace I don’t need fixed habits of prayer, fasting or Bible study.”","DISAGREE. The early church continued steadfastly in doctrine, fellowship and prayers (Acts 2:42). Godliness is profitable unto all things (1 Timothy 4:8). Discipline builds intimacy and growth (James 4:8; 2 Peter 3:18)."],
+[9,"“Whatever my job, if I do it heartily as unto the Lord, it counts as service to God.”","AGREE. “Whatsoever ye do, do it heartily, as to the Lord… for ye serve the Lord Christ” (Colossians 3:23–24). Work done this way brings a godly inheritance and eternal reward (Revelation 22:12)."],
+[12,"“A humble Christian should never admit to having gifts or abilities.”","DISAGREE (with care). The poor in spirit recognise that their strength and ability come from God (1 Corinthians 15:10), and gifts must be used to glorify Him (1 Peter 4:10–11). Humility means not boasting, not burying gifts."]]},
+{id:"tf",name:"True or False",short:"T/F",secs:20,blurb:"Quick fire. Host reads the reason after.",items:[
+[5,"Angels know the day and hour of Christ’s return.","FALSE. No one knows, “no, not the angels of heaven” (Matthew 24:36)."],
+[5,"It is right for believers to pray to angels for protection.","FALSE. We must not worship or pray to angels (Colossians 2:18; Revelation 22:8–9). We pray to God, who sends His angels."],
+[3,"The word “baptise” comes from the Greek baptizo, meaning to immerse or dip.","TRUE. Jesus Himself was baptised by immersion (Matthew 3:16)."],
+[6,"A believer’s priesthood comes through the tribe of Levi.","FALSE. It comes through Christ our High Priest, not natural descent (Hebrews 7:11–12; Revelation 1:5–6)."],
+[1,"“Immanence” means God is far above and separate from His creation.","FALSE. That is transcendence. Immanence is God’s nearness and active involvement with His people (Jeremiah 23:23)."],
+[8,"An unforgiving attitude can hinder our prayers.","TRUE. “When ye stand praying, forgive” (Mark 11:25)."],
+[10,"Christians are the owners of the resources God has given them.","FALSE. We are caretakers, not owners: “The earth is the LORD’s” (Psalm 24:1)."],
+[11,"The difference between a hireling and a good shepherd is their title or position.","FALSE. The difference is heart and motive (John 10:11–13; 1 Peter 5:2–4)."],
+[5,"The seraphim’s main role is to worship and exalt the holiness of God.","TRUE. They cry “Holy, holy, holy, is the LORD of hosts” (Isaiah 6:2–3)."],
+[2,"Through the blood of Jesus, believers can boldly enter God’s presence at any time.","TRUE. “Boldness to enter into the holiest by the blood of Jesus” (Hebrews 10:19)."],
+[4,"Sanctification is a one-time event that needs no daily surrender.","FALSE. It is God’s continuing work; we surrender daily (Romans 6:13; Colossians 3:8–10)."],
+[12,"In Jesus’ parable, the Pharisee went home justified.","FALSE. The Publican went home justified (Luke 18:14)."]]}];
+
+const KEY="doa-review-v1";
+const fresh=()=>({names:["Team Bereans","Team Overcomers","Team Stewards","Team Eagles"],score:[0,0,0,0],did:[[],[],[],[]],used:{},cur:0,turns:0,clock:1800,log:[]});
+let S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const $=id=>document.getElementById(id);
+const fmt=t=>Math.floor(t/60)+":"+String(t%60).padStart(2,"0");
+
+function renderTeams(){
+  $("teams").innerHTML=S.names.map((n,i)=>`<div class="team${i===S.cur?" on":""}" data-t="${i}">
+    <div class="adj"><button data-adj="${i}" data-v="-5" aria-label="Minus 5">−5</button><button data-adj="${i}" data-v="10" aria-label="Plus 10">+10</button></div>
+    <input value="${esc(n)}" data-name="${i}" aria-label="Team ${i+1} name">
+    <div class="score">${S.score[i]}<small>talents</small></div>
+    <div class="done">${CATS.map(c=>`<span class="${S.did[i].includes(c.id)?"x":""}">${c.short}</span>`).join("")}</div></div>`).join("");
+  const round=Math.min(4,Math.floor(S.turns/4)+1);
+  const left=CATS.filter(c=>!S.did[S.cur].includes(c.id)).map(c=>c.name);
+  $("turnTxt").innerHTML=S.turns>=16?`<b>All 16 turns played.</b> Open the final account.`:
+    `Round <b>${round}</b> of 4 · Turn ${S.turns+1} of 16 · <b>${esc(S.names[S.cur])}</b> to choose${left.length?" from: "+left.join(", "):""}`;
+}
+function renderBoard(){
+  $("board").innerHTML=CATS.map(c=>`<div class="col"><h2>${c.name}</h2><p>${c.blurb}</p><div class="tiles">${c.items.map((_,k)=>{const u=S.used[c.id+k]!==undefined;return `<button class="tile${u?" used":""}" data-c="${c.id}" data-k="${k}" ${u?"disabled":""} aria-label="${c.name} ${k+1}">${k+1}</button>`}).join("")}</div></div>`).join("");
+}
+function render(){renderTeams();renderBoard();save()}
+
+let tick=null,left=0,clueN=0,open=null;
+function stopTimer(){clearInterval(tick);tick=null}
+function startTimer(){stopTimer();const el=$("tmr");tick=setInterval(()=>{left--;if(el){el.textContent=fmt(Math.max(0,left));el.classList.toggle("low",left<=10)}if(left<=0)stopTimer()},1000)}
+function openQ(cid,k){
+  const c=CATS.find(x=>x.id===cid),it=c.items[k];open={c,k};clueN=1;left=c.secs;
+  let body="";
+  if(cid==="verse")body=`<div class="q"><em>${it[1]}</em><br>“${it[2]} …”</div>`;
+  if(cid==="who")body=`<div class="q">Who am I?</div><ol class="clues" id="clues"></ol><div class="row"><button id="bClue">Next clue</button></div>`;
+  if(cid==="court")body=`<div class="q">${it[1]}</div><p class="who">State: agree or disagree · back it with at least one scripture · say what it means for daily living.</p>`;
+  if(cid==="tf")body=`<div class="q">True or false?<br><em>${it[1]}</em></div>`;
+  const ans=cid==="verse"?`<b>${it[1]}</b><br>“${it[2]} ${it[3]}”`:cid==="who"?`<b>${it[2]}</b>`:`${it[2]}`;
+  $("card").innerHTML=`<div class="cat"><span>${c.name} · Card ${k+1}</span><span>Lesson ${it[0]}: ${L[it[0]]}</span></div>
+   <p class="who">Playing: <b>${esc(S.names[S.cur])}</b></p>${body}
+   <div class="row"><button class="gold" id="bGo">Start timer</button><button id="bShow">Show answer</button><span class="timer" id="tmr">${fmt(left)}</span></div>
+   <div class="ans" id="ans">${ans}</div>
+   <div class="row"><button class="ok" id="bOk">Correct · +10</button><button class="no" id="bNo">Wrong · −5</button><button id="bX">Close without scoring</button></div>`;
+  if(cid==="who")showClues();
+  $("ov").classList.add("show");$("bGo").focus();
+}
+function showClues(){const it=open.c.items[open.k];$("clues").innerHTML=it[1].slice(0,clueN).map((t,i)=>`<li>Clue ${i+1}: ${t}</li>`).join("");const b=$("bClue");if(b)b.disabled=clueN>=4}
+function closeQ(){stopTimer();$("ov").classList.remove("show");open=null}
+function award(v){
+  const {c,k}=open,t=S.cur;S.score[t]+=v;S.used[c.id+k]=t;
+  if(!S.did[t].includes(c.id))S.did[t].push(c.id);
+  S.log.push({t,v,c:c.id,k});S.turns++;S.cur=(S.cur+1)%4;closeQ();render();
+  if(S.turns===16)showFinal();
+}
+function panel(html){stopTimer();$("card").innerHTML=html+`<div class="row"><button class="gold" id="bX">Close</button></div>`;$("ov").classList.add("show")}
+function showFinal(){
+  const order=[0,1,2,3].sort((a,b)=>S.score[b]-S.score[a]);
+  panel(`<h2 class="cin" style="color:#f1d778;font-size:clamp(28px,4vw,44px);margin:0">The Final Account</h2>
+  <p class="who">“Well done, thou good and faithful servant: thou hast been faithful over a few things, I will make thee ruler over many things” (Matthew 25:21).</p>
+  <ol class="final">${order.map(i=>`<li><b>${esc(S.names[i])}</b> · ${S.score[i]} talents</li>`).join("")}</ol>
+  <p class="who">Tie? Play sudden death with any unused True or False card. First wrong answer loses.</p>`);
+}
+function showRules(){panel(`<div class="sheet"><h2 class="cin" style="color:#f1d778;margin:0">How the game works · 30 minutes</h2>
+<ol><li>Four teams. Each team picks a captain and a name.</li>
+<li>Teams take turns. On its turn a team chooses <b>any of the four categories</b> and any numbered card in it.</li>
+<li>Over four rounds, <b>each team plays every category once</b> and chooses the order. That makes 16 turns.</li>
+<li><b>+10 talents</b> for a correct answer. <b>−5 talents</b> for a wrong answer or no answer when time runs out.</li>
+<li>Time limits: Finish the Verse 30s · True or False 20s · Who Am I? 60s · Courtroom 2 min (1 min to prepare, 1 min to plead).</li>
+<li><b>Who Am I?</b> The host reveals clues one by one. The team may answer at any clue but gets one guess only.</li>
+<li><b>Courtroom:</b> the team must state agree or disagree, quote at least one scripture and give a practical implication. The host is the judge. A sound, scripture-backed case wins +10; a wrong verdict or no scripture loses 5.</li>
+<li><b>Finish the Verse:</b> KJV wording. The host may allow one small slip.</li>
+<li>Captains may not give the answer. Another team member must speak, so everyone takes part.</li>
+<li>The judge’s decision is final. Most talents after 16 turns wins the <b>Faithful Steward</b> award.</li></ol>
+<h3>Suggested timing</h3><ol><li>0–3 min: teams, names, rules, opening prayer.</li><li>3–27 min: 16 turns (about 90 seconds each; courtroom turns take longer).</li><li>27–30 min: final account, award and closing prayer.</li></ol></div>`)}
+function showSheet(){
+  const s=CATS.map(c=>`<h3>${c.name}</h3><ol>${c.items.map(it=>{
+    const q=c.id==="verse"?`${it[1]}: “${it[2]} …”`:c.id==="who"?it[1].join(" / "):it[1];
+    const a=c.id==="verse"?`… ${it[3]}`:c.id==="who"?it[2]:it[2];
+    return `<li>[L${it[0]}] ${q}<br><span class="a">Answer: ${a}</span></li>`}).join("")}</ol>`).join("");
+  panel(`<div class="sheet"><h2 class="cin" style="color:#f1d778;margin:0">Host answer sheet</h2><p class="who">Card numbers match the board. Keep this screen off the projector.</p><div class="row"><button id="bCopy">Copy sheet as text</button><span id="cpMsg" class="who"></span></div><div id="sheetBody">${s}</div></div>`);
+}
+
+document.addEventListener("click",e=>{
+  const b=e.target.closest("button,.team");if(!b)return;
+  if(b.dataset.adj!==undefined){e.stopPropagation();const i=+b.dataset.adj;S.score[i]+=+b.dataset.v;render();return}
+  if(b.classList.contains("team")&&!e.target.closest("input")){S.cur=+b.dataset.t;render();return}
+  if(b.classList.contains("tile")&&!b.disabled){openQ(b.dataset.c,+b.dataset.k);return}
+  switch(b.id){
+    case "bGo":startTimer();break;
+    case "bShow":$("ans").classList.add("show");stopTimer();break;
+    case "bClue":clueN=Math.min(4,clueN+1);showClues();break;
+    case "bOk":award(10);break;
+    case "bNo":award(-5);break;
+    case "bX":closeQ();break;
+    case "bRules":showRules();break;
+    case "bSheet":showSheet();break;
+    case "bFinal":showFinal();break;
+    case "bCopy":navigator.clipboard.writeText($("sheetBody").innerText).then(()=>$("cpMsg").textContent="Copied.",()=>$("cpMsg").textContent="Copy was blocked. Select the text and copy it manually.");break;
+    case "bReset":if(b.dataset.sure){S=fresh();stopGame();render();b.textContent="New game";delete b.dataset.sure}else{b.dataset.sure=1;b.textContent="Tap again to reset";setTimeout(()=>{b.textContent="New game";delete b.dataset.sure},3000)}break;
+    case "bClock":toggleGame();break;
+  }
+});
+document.addEventListener("input",e=>{const i=e.target.dataset.name;if(i!==undefined){S.names[+i]=e.target.value;save();const r=$("turnTxt");if(+i===S.cur)renderTeamsLite()}});
+function renderTeamsLite(){const n=document.activeElement;renderTeams();const el=document.querySelector(`[data-name="${n?.dataset?.name}"]`);if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&$("ov").classList.contains("show"))closeQ()});
+
+let gt=null;
+function paintClock(){$("clock").textContent=fmt(Math.max(0,S.clock));$("clock").style.color=S.clock<=180?"var(--bad)":""}
+function stopGame(){clearInterval(gt);gt=null;$("bClock").textContent="Start 30-min clock";paintClock()}
+function toggleGame(){if(gt){stopGame();return}$("bClock").textContent="Pause clock";gt=setInterval(()=>{S.clock--;paintClock();if(S.clock%5===0)save();if(S.clock<=0){stopGame();showFinal()}},1000)}
+paintClock();render();
+}
+</script>
+</body>

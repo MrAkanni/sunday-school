@@ -68,7 +68,13 @@ main{padding:18px max(4vw,16px) 40px;max-width:1400px;margin:0 auto}
 .timer.low{color:#ff7b6b}
 .who{color:#c8cfe3;font-size:15px}
 .sheet{color:#f4ecd8}.sheet h3{color:#f1d778;margin:22px 0 6px}.sheet ol{padding-left:22px}.sheet li{margin:6px 0}.sheet .a{color:#c8cfe3}
+.blank{color:#f1d778;letter-spacing:.05em}
 .final li{font-size:22px;margin:8px 0}
+.swap{text-align:center}.swap h2{color:#f1d778;font-size:clamp(30px,5vw,52px);margin:0 0 8px}.burst{font-size:64px;line-height:1;color:#f1d778;animation:spin .8s ease}
+.swapgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:16px}.swapgrid button{min-height:84px;font-size:18px}.swapgrid span{font-weight:500;font-size:15px}
+.tile.sw{color:var(--gold2);border-color:var(--gold)}
+@keyframes spin{from{transform:rotate(-180deg) scale(.4);opacity:0}}
+@media(max-width:600px){.swapgrid{grid-template-columns:minmax(0,1fr)}}
 @keyframes in{from{opacity:0;transform:translateY(6px)}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 @media(max-width:900px){.teams,.board{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -106,54 +112,57 @@ main{padding:18px max(4vw,16px) 40px;max-width:1400px;margin:0 auto}
 {
 const L=["","The Immanence of God","The Blood of Jesus","Water Baptism","Sanctification","The Ministry of Angels","The Priesthood of Believers","Spiritual Discipline","Effective Prayer","The Joy of Service","Stewardship","The Hireling","The Poor in Spirit"];
 const CATS=[
-{id:"verse",name:"Finish the Verse",short:"Verse",secs:30,blurb:"Complete this quarter’s memory verses (KJV).",items:[
-[1,"Colossians 1:17","And he is before all things,","and by him all things consist."],
-[2,"Ephesians 1:7","In whom we have redemption through his blood,","the forgiveness of sins, according to the riches of his grace."],
-[3,"Acts 2:41","Then they that gladly received his word were baptized:","and the same day there were added unto them about three thousand souls."],
-[4,"1 Thessalonians 5:23","And the very God of peace sanctify you wholly;","and I pray God your whole spirit and soul and body be preserved blameless unto the coming of our Lord Jesus Christ."],
-[5,"Psalm 91:11","For he shall give his angels charge over thee,","to keep thee in all thy ways."],
-[6,"1 Peter 2:9","But ye are a chosen generation, a royal priesthood,","an holy nation, a peculiar people; that ye should shew forth the praises of him who hath called you out of darkness into his marvellous light."],
-[7,"1 Timothy 4:8","For bodily exercise profiteth little:","but godliness is profitable unto all things, having promise of the life that now is, and of that which is to come."],
-[8,"Proverbs 15:29","The LORD is far from the wicked:","but he heareth the prayer of the righteous."],
-[9,"2 Kings 3:11","…And one of the king of Israel’s servants answered and said, Here is Elisha the son of Shaphat,","which poured water on the hands of Elijah."],
-[10,"1 Corinthians 4:2","Moreover it is required in stewards,","that a man be found faithful."],
-[11,"John 10:12","But he that is an hireling, and not the shepherd, whose own the sheep are not,","seeth the wolf coming, and leaveth the sheep, and fleeth: and the wolf catcheth them, and scattereth the sheep."],
-[12,"Psalm 51:17","The sacrifices of God are a broken spirit:","a broken and a contrite heart, O God, thou wilt not despise."]]},
-{id:"who",name:"Who Am I?",short:"Who",secs:60,blurb:"Clues one at a time. One guess per team.",items:[
-[9,["My father was Shaphat, and I was ploughing when I was called.","I served my master humbly, even pouring water on his hands.","I asked for a double portion of his spirit.","Three kings came looking for me when they needed a word from God."],"Elisha (2 Kings 2:9–10; 3:11)"],
-[8,["I was a man subject to like passions as you are.","I prayed earnestly that it might not rain.","No rain fell for three years and six months.","I prayed again, and heaven gave rain."],"Elijah (James 5:17–18)"],
-[1,["God came near me while I kept my father-in-law’s flock.","He told me He had seen the affliction of His people.","I was told to take off my shoes, for the ground was holy.","God called my name out of a bush that burned but was not consumed."],"Moses (Exodus 3:4–7)"],
-[12,["I was rich, and I worked as a chief tax collector.","I wanted to see Jesus, but the crowd was in my way.","Being short, I climbed a sycomore tree.","Jesus said, “This day is salvation come to this house.”"],"Zacchaeus (Luke 19:1–9)"],
-[12,["I went up to the temple to pray, standing beside a proud man.","I stood afar off and would not even lift my eyes to heaven.","I smote upon my breast and cried, “God be merciful to me a sinner.”","I went down to my house justified, rather than the other man."],"The Publican (Luke 18:9–14)"],
-[12,["I was a great woman who lived in Shunem.","I persuaded a man of God to eat bread at my house.","I asked my husband to build him a little chamber on the wall.","Through my hospitality and humility, I was promised a son."],"The Shunammite woman (2 Kings 4:8–16)"],
+{id:"verse",name:"Finish the Verse",short:"Verse",secs:30,blurb:"Fill in the missing key word from this quarter’s memory verses (KJV).",items:[
+[1,"Colossians 1:17","And he is before all things, and by him all things","consist","."],
+[2,"Ephesians 1:7","In whom we have","redemption"," through his blood, the forgiveness of sins, according to the riches of his grace."],
+[3,"Acts 2:41","Then they that","gladly"," received his word were baptized: and the same day there were added unto them about three thousand souls."],
+[4,"1 Thessalonians 5:23","And the very God of peace sanctify you wholly; and I pray God your whole spirit and soul and body be preserved","blameless"," unto the coming of our Lord Jesus Christ."],
+[5,"Psalm 91:11","For he shall give his angels","charge"," over thee, to keep thee in all thy ways."],
+[6,"1 Peter 2:9","But ye are a","chosen"," generation, a royal priesthood, an holy nation, a peculiar people; that ye should shew forth the praises of him who hath called you out of darkness into his marvellous light."],
+[7,"1 Timothy 4:8","For bodily exercise profiteth little: but","godliness"," is profitable unto all things, having promise of the life that now is, and of that which is to come."],
+[8,"Proverbs 15:29","The LORD is far from the wicked: but he heareth the prayer of the","righteous","."],
+[9,"2 Kings 3:11","…Here is Elisha the son of Shaphat, which","poured"," water on the hands of Elijah."],
+[10,"1 Corinthians 4:2","Moreover it is required in stewards, that a man be found","faithful","."],
+[11,"John 10:12","But he that is an hireling, and not the","shepherd",", whose own the sheep are not, seeth the wolf coming, and leaveth the sheep, and fleeth: and the wolf catcheth them, and scattereth the sheep."],
+[12,"Psalm 51:17","The sacrifices of God are a broken spirit: a broken and a","contrite"," heart, O God, thou wilt not despise."]]},
+{id:"who",name:"Who Am I?",short:"Who",secs:60,blurb:"Clues get easier one at a time. One guess per team.",items:[
+[1,["God came near to me in an ordinary place, while I was at work.","He told me He had seen the affliction of His people.","I was told to take off my shoes, because the ground was holy.","God called my name out of a bush that burned but was not consumed."],"Moses (Exodus 3:1–7)"],
+[8,["I was a man subject to like passions as you are.","I prayed earnestly, and no rain fell for three years and six months.","I prayed again, and the heaven gave rain.","I called down fire on Mount Carmel and was taken up in a whirlwind."],"Elijah (James 5:17–18)"],
+[9,["My father was Shaphat, and I was ploughing when I was called.","I was introduced to three kings by the service I had rendered.","I asked for a double portion of my master’s spirit.","I poured water on the hands of Elijah."],"Elisha (2 Kings 2:9; 3:11)"],
+[12,["Salvation came to my whole household in one day.","I promised to give half of my goods to the poor.","I was a rich chief tax collector, and a short man.","I climbed a sycomore tree to see Jesus."],"Zacchaeus (Luke 19:1–9)"],
+[12,["I went up to the temple to pray at the same time as a proud religious man.","I stood afar off and would not even lift my eyes to heaven.","I cried, “God be merciful to me a sinner.”","I went home justified, and the Pharisee did not."],"The Publican (Luke 18:9–14)"],
+[12,["I was a great woman who lived in Shunem.","I persuaded a man of God to eat bread at my house.","I had a little chamber built on the wall for him.","Through my kindness, Elisha promised me a son."],"The Shunammite woman (2 Kings 4:8–16)"],
 [8,["I was a soldier with men under my authority.","My servant lay at home sick of the palsy.","I said I was not worthy for Jesus to come under my roof.","I said, “Speak the word only, and my servant shall be healed.”"],"The Centurion (Matthew 8:5–13)"],
-[4,["I saw the Lord sitting upon a throne, high and lifted up.","Above Him stood beings with six wings, crying “Holy, holy, holy.”","I cried, “Woe is me! for I am undone… a man of unclean lips.”","A live coal from the altar touched my lips, and my sin was purged."],"Isaiah (Isaiah 6:1–7)"]]},
+[12,["I was a king, but I was not too proud to repent.","A prophet told me a story about a poor man’s lamb.","I wrote, “The sacrifices of God are a broken spirit.”","As a shepherd boy, I killed Goliath."],"King David (2 Samuel 12; Psalm 51)"]]},
 {id:"court",name:"The Bible Courtroom",short:"Court",secs:120,blurb:"Agree or disagree? Defend it with Scripture. 1 min to prepare, 1 min to plead.",items:[
-[3,"“Water baptism is what saves a person.”","DISAGREE. Baptism does not save; it is the outward response to an inward, saving faith (Lesson 3). The thief on the cross was saved without it (Luke 23:39–43). Salvation is by grace through faith (Ephesians 2:8–9)."],
-[6,"“Prayer is the pastor’s job. Ordinary members just say ‘Amen’.”","DISAGREE. Every believer is a priest with direct access to God (1 Peter 2:9; Hebrews 4:16) and is called to stand in the gap through intercession (1 Timothy 2:1). Direct access brings greater responsibility (Lesson 6)."],
-[11,"“If I serve in church only when it is convenient, God still counts it as faithful service.”","DISAGREE. Serving only when convenient or profitable is the mark of a hireling (John 10:12–13; Malachi 1:10). God requires stewards to be found faithful (1 Corinthians 4:2)."],
-[1,"“God is too great and too far away to be concerned with my small daily problems.”","DISAGREE. God is immanent: near and involved. He knows our thoughts and ways (Psalm 139:1–3), sees suffering and acts (Exodus 3:7–8), and is with us always (Matthew 28:20)."],
-[2,"“Since I am covered by the blood of Jesus, how I live no longer matters.”","DISAGREE. To benefit from the blood we must be saved and obedient (Romans 6:16–18; Isaiah 59:1–2). God calls us to be sanctified wholly (1 Thessalonians 5:23)."],
-[7,"“Spiritual discipline is legalism. Under grace I don’t need fixed habits of prayer, fasting or Bible study.”","DISAGREE. The early church continued steadfastly in doctrine, fellowship and prayers (Acts 2:42). Godliness is profitable unto all things (1 Timothy 4:8). Discipline builds intimacy and growth (James 4:8; 2 Peter 3:18)."],
-[9,"“Whatever my job, if I do it heartily as unto the Lord, it counts as service to God.”","AGREE. “Whatsoever ye do, do it heartily, as to the Lord… for ye serve the Lord Christ” (Colossians 3:23–24). Work done this way brings a godly inheritance and eternal reward (Revelation 22:12)."],
-[12,"“A humble Christian should never admit to having gifts or abilities.”","DISAGREE (with care). The poor in spirit recognise that their strength and ability come from God (1 Corinthians 15:10), and gifts must be used to glorify Him (1 Peter 4:10–11). Humility means not boasting, not burying gifts."]]},
-{id:"tf",name:"True or False",short:"T/F",secs:20,blurb:"Quick fire. Host reads the reason after.",items:[
+[3,"“Water baptism is what saves a person.”","DISAGREE. Baptism is the outward response to an inward, saving faith. The thief on the cross was saved without it (Luke 23:39–43). Salvation is by grace through faith (Ephesians 2:8–9)."],
+[6,"“Every believer can go to God directly, without needing a pastor to pray for them.”","AGREE. Every believer is part of “a royal priesthood” (1 Peter 2:9) and can come boldly to the throne of grace (Hebrews 4:16). We still pray for one another (1 Timothy 2:1)."],
+[11,"“As long as I do my church work well, my motive does not matter.”","DISAGREE. The hireling and the shepherd may do the same work; the difference is the heart (John 10:12–13). Serve “not for filthy lucre, but of a ready mind” (1 Peter 5:2)."],
+[1,"“God is too great to be concerned with my small daily problems.”","DISAGREE. God knows our sitting down and rising up (Psalm 139:1–3), sees suffering and acts (Exodus 3:7–8), and is with us always (Matthew 28:20)."],
+[2,"“Since I am covered by the blood of Jesus, how I live no longer matters.”","DISAGREE. We are servants of whom we obey (Romans 6:16–18), and sin separates us from God (Isaiah 59:1–2). God calls us to be sanctified wholly (1 Thessalonians 5:23)."],
+[7,"“Under grace, I don’t need fixed habits of prayer, fasting or Bible study.”","DISAGREE. The early church continued steadfastly in doctrine and prayers (Acts 2:42). Godliness is profitable unto all things (1 Timothy 4:8)."],
+[9,"“Whatever my job, if I do it heartily as unto the Lord, it counts as service to God.”","AGREE. “Whatsoever ye do, do it heartily, as to the Lord… for ye serve the Lord Christ” (Colossians 3:23–24)."],
+[12,"“A humble Christian should never admit to having gifts or abilities.”","DISAGREE (with care). The poor in spirit know their ability comes from God (1 Corinthians 15:10), and gifts must be used to glorify Him (1 Peter 4:10–11). Humility means not boasting, not burying gifts."]]},
+{id:"tf",name:"True or False",short:"T/F",secs:20,blurb:"Quick fire, with a few traps. Host reads the reason after.",items:[
 [5,"Angels know the day and hour of Christ’s return.","FALSE. No one knows, “no, not the angels of heaven” (Matthew 24:36)."],
-[5,"It is right for believers to pray to angels for protection.","FALSE. We must not worship or pray to angels (Colossians 2:18; Revelation 22:8–9). We pray to God, who sends His angels."],
-[3,"The word “baptise” comes from the Greek baptizo, meaning to immerse or dip.","TRUE. Jesus Himself was baptised by immersion (Matthew 3:16)."],
-[6,"A believer’s priesthood comes through the tribe of Levi.","FALSE. It comes through Christ our High Priest, not natural descent (Hebrews 7:11–12; Revelation 1:5–6)."],
-[1,"“Immanence” means God is far above and separate from His creation.","FALSE. That is transcendence. Immanence is God’s nearness and active involvement with His people (Jeremiah 23:23)."],
+[5,"The seraphim that Isaiah saw each had six wings.","TRUE. “Each one had six wings” (Isaiah 6:2)."],
+[3,"About five thousand people were added to the church on the day of Pentecost.","FALSE. It was about three thousand souls (Acts 2:41)."],
+[1,"Jesus, “Immanuel”, is the greatest expression of God being near to us.","TRUE. Immanuel means “God with us” (Matthew 1:23; John 1:14)."],
+[1,"“Immanence” means God is far above and separate from His creation.","FALSE. That is transcendence. Immanence is God’s nearness and involvement (Jeremiah 23:23)."],
+[6,"A believer’s priesthood comes through the tribe of Levi.","FALSE. It comes through Christ our High Priest (Hebrews 7:11–12; Revelation 1:5–6)."],
 [8,"An unforgiving attitude can hinder our prayers.","TRUE. “When ye stand praying, forgive” (Mark 11:25)."],
-[10,"Christians are the owners of the resources God has given them.","FALSE. We are caretakers, not owners: “The earth is the LORD’s” (Psalm 24:1)."],
-[11,"The difference between a hireling and a good shepherd is their title or position.","FALSE. The difference is heart and motive (John 10:11–13; 1 Peter 5:2–4)."],
-[5,"The seraphim’s main role is to worship and exalt the holiness of God.","TRUE. They cry “Holy, holy, holy, is the LORD of hosts” (Isaiah 6:2–3)."],
-[2,"Through the blood of Jesus, believers can boldly enter God’s presence at any time.","TRUE. “Boldness to enter into the holiest by the blood of Jesus” (Hebrews 10:19)."],
-[4,"Sanctification is a one-time event that needs no daily surrender.","FALSE. It is God’s continuing work; we surrender daily (Romans 6:13; Colossians 3:8–10)."],
-[12,"In Jesus’ parable, the Pharisee went home justified.","FALSE. The Publican went home justified (Luke 18:14)."]]}];
+[9,"Elisha poured water on the hands of Moses.","FALSE. He poured water on the hands of Elijah (2 Kings 3:11)."],
+[10,"The one-talent servant was punished because he stole his master’s money.","FALSE. He hid it in the earth out of fear (Matthew 25:25–26)."],
+[11,"The hireling flees because he cares not for the sheep.","TRUE. “The hireling fleeth, because he is an hireling, and careth not for the sheep” (John 10:13)."],
+[12,"In Jesus’ parable, the Publican, not the Pharisee, went home justified.","TRUE. “This man went down to his house justified rather than the other” (Luke 18:14)."],
+[4,"Paul prayed that God would sanctify believers’ whole spirit, soul and body.","TRUE. 1 Thessalonians 5:23."]]}];
 
-const KEY="doa-review-v1";
-const fresh=()=>({names:["Team Bereans","Team Overcomers","Team Stewards","Team Eagles"],score:[0,0,0,0],did:[[],[],[],[]],used:{},cur:0,turns:0,clock:1800,log:[]});
+const KEY="doa-review-v5";
+const SWAPS_PER_CAT=2;
+function pickSwaps(){const o={};CATS.forEach(c=>{const idx=[...c.items.keys()];for(let i=idx.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idx[i],idx[j]]=[idx[j],idx[i]]}idx.slice(0,SWAPS_PER_CAT).forEach(k=>o[c.id+k]=1)});return o}
+const fresh=()=>({names:["Team Bereans","Team Overcomers","Team Stewards","Team Eagles"],score:[0,0,0,0],did:[[],[],[],[]],used:{},cur:0,turns:0,clock:1800,log:[],swaps:pickSwaps()});
 let S;try{S=JSON.parse(localStorage.getItem(KEY))||fresh()}catch(e){S=fresh()}
+if(!S.swaps)S.swaps=pickSwaps();
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const $=id=>document.getElementById(id);
@@ -171,7 +180,7 @@ function renderTeams(){
     `Round <b>${round}</b> of 4 · Turn ${S.turns+1} of 16 · <b>${esc(S.names[S.cur])}</b> to choose${left.length?" from: "+left.join(", "):""}`;
 }
 function renderBoard(){
-  $("board").innerHTML=CATS.map(c=>`<div class="col"><h2>${c.name}</h2><p>${c.blurb}</p><div class="tiles">${c.items.map((_,k)=>{const u=S.used[c.id+k]!==undefined;return `<button class="tile${u?" used":""}" data-c="${c.id}" data-k="${k}" ${u?"disabled":""} aria-label="${c.name} ${k+1}">${k+1}</button>`}).join("")}</div></div>`).join("");
+  $("board").innerHTML=CATS.map(c=>`<div class="col"><h2>${c.name}</h2><p>${c.blurb}</p><div class="tiles">${c.items.map((_,k)=>{const u=S.used[c.id+k]!==undefined;const sw=u&&S.swaps[c.id+k];return `<button class="tile${u?" used":""}${sw?" sw":""}" data-c="${c.id}" data-k="${k}" ${u?"disabled":""} aria-label="${c.name} ${k+1}">${k+1}${sw?" ⇄":""}</button>`}).join("")}</div></div>`).join("");
 }
 function render(){renderTeams();renderBoard();save()}
 
@@ -181,13 +190,13 @@ function startTimer(){stopTimer();const el=$("tmr");tick=setInterval(()=>{left--
 function openQ(cid,k){
   const c=CATS.find(x=>x.id===cid),it=c.items[k];open={c,k};clueN=1;left=c.secs;
   let body="";
-  if(cid==="verse")body=`<div class="q"><em>${it[1]}</em><br>“${it[2]} …”</div>`;
+  if(cid==="verse")body=`<div class="q"><em>${it[1]}</em><br>“${it[2]} <span class=\"blank\">______</span>${it[4]}”</div>`;
   if(cid==="who")body=`<div class="q">Who am I?</div><ol class="clues" id="clues"></ol><div class="row"><button id="bClue">Next clue</button></div>`;
-  if(cid==="court")body=`<div class="q">${it[1]}</div><p class="who">State: agree or disagree · back it with at least one scripture · say what it means for daily living.</p>`;
+  if(cid==="court")body=`<div class="q">${it[1]}</div><p class="who">Say agree or disagree · quote at least one supporting scripture · say what it means for daily living.</p>`;
   if(cid==="tf")body=`<div class="q">True or false?<br><em>${it[1]}</em></div>`;
-  const ans=cid==="verse"?`<b>${it[1]}</b><br>“${it[2]} ${it[3]}”`:cid==="who"?`<b>${it[2]}</b>`:`${it[2]}`;
+  const ans=cid==="verse"?`<b>${it[3]}</b><br>“${it[2]} <u>${it[3]}</u>${it[4]}” (${it[1]})`:cid==="who"?`<b>${it[2]}</b>`:`${it[2]}`;
   $("card").innerHTML=`<div class="cat"><span>${c.name} · Card ${k+1}</span><span>Lesson ${it[0]}: ${L[it[0]]}</span></div>
-   <p class="who">Playing: <b>${esc(S.names[S.cur])}</b></p>${body}
+   <p class="who">Playing: <b>${esc(S.names[S.cur])}</b></p>${S.did[S.cur].includes(cid)&&S.did[S.cur].length<4?`<p class="who" style="color:#ff9b8f"><b>Note:</b> this team has already played ${c.name}. Each team should play every category once. Close this card and choose another category.</p>`:""}${body}
    <div class="row"><button class="gold" id="bGo">Start timer</button><button id="bShow">Show answer</button><span class="timer" id="tmr">${fmt(left)}</span></div>
    <div class="ans" id="ans">${ans}</div>
    <div class="row"><button class="ok" id="bOk">Correct · +10</button><button class="no" id="bNo">Wrong · −5</button><button id="bX">Close without scoring</button></div>`;
@@ -196,13 +205,33 @@ function openQ(cid,k){
 }
 function showClues(){const it=open.c.items[open.k];$("clues").innerHTML=it[1].slice(0,clueN).map((t,i)=>`<li>Clue ${i+1}: ${t}</li>`).join("");const b=$("bClue");if(b)b.disabled=clueN>=4}
 function closeQ(){stopTimer();$("ov").classList.remove("show");open=null}
+let swapper=null;
 function award(v){
-  const {c,k}=open,t=S.cur;S.score[t]+=v;S.used[c.id+k]=t;
+  const {c,k}=open,t=S.cur,key=c.id+k;S.score[t]+=v;S.used[key]=t;
   if(!S.did[t].includes(c.id))S.did[t].push(c.id);
   S.log.push({t,v,c:c.id,k});S.turns++;S.cur=(S.cur+1)%4;closeQ();render();
+  if(S.swaps[key]&&v>0){swapper=t;showSwap();return}
+  if(S.swaps[key])return swapMissed(t);
   if(S.turns===16)showFinal();
 }
-function panel(html){stopTimer();$("card").innerHTML=html+`<div class="row"><button class="gold" id="bX">Close</button></div>`;$("ov").classList.add("show")}
+function showSwap(){
+  const t=swapper;
+  panel(`<div class="swap"><div class="burst">⇄</div><h2 class="cin">Swap Card!</h2>
+  <p class="who"><b>${esc(S.names[t])}</b> answered a hidden Swap Card correctly and now holds <b>${S.score[t]} talents</b>. They may swap their whole total with any other team, or keep what they have.</p>
+  <div class="swapgrid">${[0,1,2,3].filter(i=>i!==t).map(i=>`<button class="gold" data-swap="${i}">Swap with ${esc(S.names[i])}<br><span>${S.score[i]} talents</span></button>`).join("")}</div>
+  <div class="row"><button id="bKeep">Keep our ${S.score[t]} talents</button></div></div>`,true);
+}
+function swapMissed(t){
+  panel(`<div class="swap"><div class="burst">⇄</div><h2 class="cin">That was a Swap Card</h2><p class="who">If <b>${esc(S.names[t])}</b> had answered correctly, they could have swapped talents with another team. The chance is gone.</p></div>`+endBtn());
+}
+function doSwap(j){
+  const t=swapper;[S.score[t],S.score[j]]=[S.score[j],S.score[t]];
+  S.log.push({swap:[t,j]});swapper=null;
+  panel(`<div class="swap"><div class="burst">⇄</div><h2 class="cin">Talents swapped</h2><p class="who"><b>${esc(S.names[t])}</b> now has <b>${S.score[t]}</b> talents. <b>${esc(S.names[j])}</b> now has <b>${S.score[j]}</b>.</p></div>`+endBtn());
+  render();
+}
+function panel(html,noClose){stopTimer();$("card").innerHTML=html+(noClose?"":`<div class="row"><button class="gold" id="bX">Close</button></div>`);$("ov").classList.add("show")}
+const endBtn=()=>S.turns===16?`<div class="row"><button class="gold" id="bFinal">See the final account</button></div>`:"";
 function showFinal(){
   const order=[0,1,2,3].sort((a,b)=>S.score[b]-S.score[a]);
   panel(`<h2 class="cin" style="color:#f1d778;font-size:clamp(28px,4vw,44px);margin:0">The Final Account</h2>
@@ -217,17 +246,18 @@ function showRules(){panel(`<div class="sheet"><h2 class="cin" style="color:#f1d
 <li><b>+10 talents</b> for a correct answer. <b>−5 talents</b> for a wrong answer or no answer when time runs out.</li>
 <li>Time limits: Finish the Verse 30s · True or False 20s · Who Am I? 60s · Courtroom 2 min (1 min to prepare, 1 min to plead).</li>
 <li><b>Who Am I?</b> The host reveals clues one by one. The team may answer at any clue but gets one guess only.</li>
-<li><b>Courtroom:</b> the team must state agree or disagree, quote at least one scripture and give a practical implication. The host is the judge. A sound, scripture-backed case wins +10; a wrong verdict or no scripture loses 5.</li>
-<li><b>Finish the Verse:</b> KJV wording. The host may allow one small slip.</li>
+<li><b>Courtroom:</b> the team must say agree or disagree and quote at least one supporting scripture (book and chapter). No scripture means no talents. The host is the judge. A sound, scripture-backed case wins +10; a wrong verdict or no scripture loses 5.</li>
+<li><b>Finish the Verse:</b> say the one missing key word, exactly as in the KJV.</li>
+<li><b>Hidden Swap Cards:</b> two cards in every category are secret Swap Cards. If a team answers one correctly, it may swap its whole talent total with any other team, or keep what it has. Nobody knows which cards they are until one is answered.</li>
 <li>Captains may not give the answer. Another team member must speak, so everyone takes part.</li>
 <li>The judge’s decision is final. Most talents after 16 turns wins the <b>Faithful Steward</b> award.</li></ol>
 <h3>Suggested timing</h3><ol><li>0–3 min: teams, names, rules, opening prayer.</li><li>3–27 min: 16 turns (about 90 seconds each; courtroom turns take longer).</li><li>27–30 min: final account, award and closing prayer.</li></ol></div>`)}
 function showSheet(){
   const s=CATS.map(c=>`<h3>${c.name}</h3><ol>${c.items.map(it=>{
-    const q=c.id==="verse"?`${it[1]}: “${it[2]} …”`:c.id==="who"?it[1].join(" / "):it[1];
-    const a=c.id==="verse"?`… ${it[3]}`:c.id==="who"?it[2]:it[2];
-    return `<li>[L${it[0]}] ${q}<br><span class="a">Answer: ${a}</span></li>`}).join("")}</ol>`).join("");
-  panel(`<div class="sheet"><h2 class="cin" style="color:#f1d778;margin:0">Host answer sheet</h2><p class="who">Card numbers match the board. Keep this screen off the projector.</p><div class="row"><button id="bCopy">Copy sheet as text</button><span id="cpMsg" class="who"></span></div><div id="sheetBody">${s}</div></div>`);
+    const q=c.id==="verse"?`${it[1]}: “${it[2]} ______${it[4]}”`:c.id==="who"?it[1].join(" / "):it[1];
+    const a=c.id==="verse"?it[3]:c.id==="who"?it[2]:it[2];
+    const k=c.items.indexOf(it);return `<li>${S.swaps[c.id+k]?"<b style=\"color:#f1d778\">⇄ SWAP CARD</b> ":""}[L${it[0]}] ${q}<br><span class="a">Answer: ${a}</span></li>`}).join("")}</ol>`).join("");
+  panel(`<div class="sheet"><h2 class="cin" style="color:#f1d778;margin:0">Host answer sheet</h2><p class="who">Card numbers match the board. Keep this screen off the projector. ⇄ marks this game’s hidden Swap Cards; they are reshuffled every time you press New game.</p><div class="row"><button id="bCopy">Copy sheet as text</button><span id="cpMsg" class="who"></span></div><div id="sheetBody">${s}</div></div>`);
 }
 
 document.addEventListener("click",e=>{
@@ -235,6 +265,7 @@ document.addEventListener("click",e=>{
   if(b.dataset.adj!==undefined){e.stopPropagation();const i=+b.dataset.adj;S.score[i]+=+b.dataset.v;render();return}
   if(b.classList.contains("team")&&!e.target.closest("input")){S.cur=+b.dataset.t;render();return}
   if(b.classList.contains("tile")&&!b.disabled){openQ(b.dataset.c,+b.dataset.k);return}
+  if(b.dataset.swap!==undefined){doSwap(+b.dataset.swap);return}
   switch(b.id){
     case "bGo":startTimer();break;
     case "bShow":$("ans").classList.add("show");stopTimer();break;
@@ -242,6 +273,7 @@ document.addEventListener("click",e=>{
     case "bOk":award(10);break;
     case "bNo":award(-5);break;
     case "bX":closeQ();break;
+    case "bKeep":swapper=null;closeQ();if(S.turns===16)showFinal();break;
     case "bRules":showRules();break;
     case "bSheet":showSheet();break;
     case "bFinal":showFinal();break;
